@@ -1,16 +1,19 @@
 version: "3.3"
 services:
   web-server:
+    container_name: web_server
     build:
       dockerfile: php.Dockerfile
       context: .
     restart: always
     volumes:
-      - "./html/:/var/www/html/"
+      - php_data:/var/www/html/
+      # \\wsl$\docker-desktop-data\data\docker\volumes
     ports:
       - "30001:80"
       - "30002:443"
   mysql-server:
+    container_name: mysql
     image: mysql:8.0.19
     restart: always
     environment:
@@ -21,6 +24,7 @@ services:
       - "./config/my.cnf:/etc/mysql/my.cnf"
 
   phpmyadmin:
+    container_name: phpmyadmin
     image: phpmyadmin/phpmyadmin:5.0.1
     restart: always
     environment:
@@ -32,3 +36,4 @@ services:
       - "./config/config.inc.php:/etc/phpmyadmin/config.inc.php"
 volumes:
   mysql-data:
+  php_data:

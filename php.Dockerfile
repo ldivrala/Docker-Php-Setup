@@ -43,14 +43,17 @@ RUN a2enmod rewrite \
     && a2enmod ssl \
     && service apache2 restart
 
-# Enable Nano
-ENV TERM xterm
-
 # Install Composer (optionnal)
 ENV COMPOSER_HOME /root/composer 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 ENV PATH $COMPOSER_HOME/vendor/bin:$PATH
 
+# Npm Setup
+RUN apt-get update && \
+    apt-get install -y npm && \
+    npm install -g n && \
+    n stable && \
+    ln -sf /usr/local/bin/node /usr/bin/nodejs
 
 ## Copy php.ini over
 COPY ./config/php.ini /usr/local/etc/php/php.ini
@@ -65,7 +68,11 @@ COPY ./config/default-ssl.conf /etc/apache2/sites-enabled/default-ssl.conf
 EXPOSE 30001
 EXPOSE 30002
 
+# Create new user for web for html folder access only
+RUN useradd -ms /bin/bash web
+RUN chown -R web:web /var/www/html \
+    && chmod -R 777 /var/www/html \
+    && mkdir /var/www/backup
+
 ## Cleanup
 RUN rm -rf /tmp/*
-
-
