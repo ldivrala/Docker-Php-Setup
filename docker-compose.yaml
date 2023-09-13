@@ -7,7 +7,7 @@ services:
       context: .
     restart: always
     volumes:
-      - php_data:/var/www/html/
+      - ./html:/var/www/html/
       # \\wsl$\docker-desktop-data\data\docker\volumes
     ports:
       - "30001:80"
